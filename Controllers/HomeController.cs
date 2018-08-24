@@ -12,11 +12,14 @@ namespace DataApp.Controllers
             this.repository = repository;
         }
 
-        public IActionResult Index()
-        {
-            return View(repository.GetAllProducts());
+        public IActionResult Index(string category = null, decimal? price = null) {
+            var products = repository.GetFilteredProducts(category, price);
+            ViewBag.category = category;
+            ViewBag.price = price;
+            
+            return View(products);
         }
-
+        
         public IActionResult Create()
         {
             ViewBag.CreateMode = true;
@@ -37,9 +40,8 @@ namespace DataApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product)
-        {
-            repository.UpdateProduct(product);
+        public IActionResult Edit(Product product, Product original) {
+            repository.UpdateProduct(product, original);
             return RedirectToAction(nameof(Index));
         }
 
